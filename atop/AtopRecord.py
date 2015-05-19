@@ -4,6 +4,7 @@ import json
 from atop.MemLineGrammar import MemLineGrammar
 from atop.CpuLineGrammar import CpuLineGrammar
 from atop.LineHeaderGrammar import LineHeaderGrammar
+from atop.AtopIso8601Timestamp import AtopIso8601Timestamp
 
 class AtopRecord( object ):
     MemLineGrammar = MemLineGrammar().getGrammar()
@@ -32,25 +33,9 @@ class AtopRecord( object ):
 
         self.fields["memUsedPercentage"] = memUsedPct
 
-        year = parseResults.get( LineHeaderGrammar.YEAR )
-        month = parseResults.get( LineHeaderGrammar.MONTH )
-        day = parseResults.get( LineHeaderGrammar.DAY )
-        hour = parseResults.get( LineHeaderGrammar.HOUR )
-        minute = parseResults.get( LineHeaderGrammar.MINUTE )
-        second = parseResults.get( LineHeaderGrammar.SECOND )
-        iso8601 = year
-        iso8601 += "-"
-        iso8601 += month
-        iso8601 += "-"
-        iso8601 += day
-        iso8601 += "T"
-        iso8601 += hour
-        iso8601 += ":"
-        iso8601 += minute
-        iso8601 += ":"
-        iso8601 += second
-        iso8601 += "Z"
-        self.fields["@timestamp"] = iso8601
+        self.fields["log_host"] = parseResults.get( LineHeaderGrammar.HOSTNAME )
+        tsConvertor = AtopIso8601Timestamp()
+        self.fields["@timestamp"] = tsConvertor.toIso8601( parseResults.asDict() )
         self.fields["@version"] = 1
 
     def __parseCpuLine( self, line ):
@@ -59,7 +44,11 @@ class AtopRecord( object ):
         ticksPerSecond = int( parseResults.get( CpuLineGrammar.CPU_TICKS_PER_SECOND ) )
         numProcessors = int( parseResults.get( CpuLineGrammar.CPU_NUM_PROCESSORS ) )
         cpuSystem = int( parseResults.get( CpuLineGrammar.CPU_SYSTEM_TICKS ) )
+
         self.fields["cpuSystemPercentage"] = ( ( cpuSystem / ticksPerSecond ) * 100 ) / numProcessors
 
+        self.fields["log_host"] = parseResults.get( LineHeaderGrammar.HOSTNAME )
+        tsConvertor = AtopIso8601Timestamp()
+        self.fields["@timestamp"] = tsConvertor.toIso8601( parseResults.asDict() )
         self.fields["@version"] = 1
 
