@@ -1,14 +1,14 @@
 import logging
 import json
 
-from atop.MemLineGrammar import MemLineGrammar
-from atop.CpuLineGrammar import CpuLineGrammar
-from atop.LineHeaderGrammar import LineHeaderGrammar
-from atop.AtopIso8601Timestamp import AtopIso8601Timestamp
+import MemLineGrammar
+import CpuLineGrammar
+import LineHeaderGrammar
+import AtopIso8601Timestamp
 
 class AtopRecord( object ):
-    MemLineGrammar = MemLineGrammar().getGrammar()
-    CpuLineGrammar = CpuLineGrammar().getGrammar()
+    MemLineGrammar = MemLineGrammar.MemLineGrammar().getGrammar()
+    CpuLineGrammar = CpuLineGrammar.CpuLineGrammar().getGrammar()
 
     def __init__( self, recordNo, logger=None ):
         self.logger = logger or logging.getLogger( __name__ )
@@ -34,7 +34,7 @@ class AtopRecord( object ):
         self.fields["memUsedPercentage"] = memUsedPct
 
         self.fields["log_host"] = parseResults.get( LineHeaderGrammar.HOSTNAME )
-        tsConvertor = AtopIso8601Timestamp()
+        tsConvertor = AtopIso8601Timestamp.AtopIso8601Timestamp()
         self.fields["@timestamp"] = tsConvertor.toIso8601( parseResults.asDict() )
         self.fields["@version"] = 1
 
@@ -48,7 +48,7 @@ class AtopRecord( object ):
         self.fields["cpuSystemPercentage"] = ( ( cpuSystem / ticksPerSecond ) * 100 ) / numProcessors
 
         self.fields["log_host"] = parseResults.get( LineHeaderGrammar.HOSTNAME )
-        tsConvertor = AtopIso8601Timestamp()
+        tsConvertor = AtopIso8601Timestamp.AtopIso8601Timestamp()
         self.fields["@timestamp"] = tsConvertor.toIso8601( parseResults.asDict() )
         self.fields["@version"] = 1
 

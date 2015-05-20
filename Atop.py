@@ -2,7 +2,8 @@
 import sys
 import logging
 
-from atop import AtopCommandLine, AtopFileParser
+import AtopCommandLine
+import AtopFileParser
 
 def main(argv=None):
     if argv is None:
@@ -10,13 +11,13 @@ def main(argv=None):
 
     logging.basicConfig(level=logging.INFO)
     logger = logging.getLogger("AtopFileParser")
-    
-    commandLine = AtopCommandLine.AtopCommandLine(argv)
-            
+
+    command_line = AtopCommandLine.AtopCommandLine(argv)
+
     logger.debug("Atop parsing started")
     try:
         parser = AtopFileParser.AtopFileParser(logger)
-        parser.parse(commandLine.getFileName())
+        parser.parse(command_line.getFileName())
     except IOError:
         logger.error("File not found exception")
         return 1
@@ -24,4 +25,4 @@ def main(argv=None):
     return 0
 
 if __name__ == "__main__":
-    sys.exit( main() )
+    sys.exit(main())
