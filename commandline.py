@@ -1,6 +1,6 @@
 import argparse
 
-class AtopCommandLine(object):
+class CommandLine(object):
 
 
     def __init__(self, argv):

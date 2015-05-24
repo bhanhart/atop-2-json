@@ -1,22 +1,27 @@
-
+"""
+    Parse an atop text file and convert to JSON format.
+"""
 import sys
 import logging
 
-import AtopCommandLine
-import AtopFileParser
+from commandline import CommandLine
+from fileparser import AtopFileParser
+
 
 def main(argv=None):
+    """ Read the passed in atop text file and convert to JSON """
+
     if argv is None:
         argv = sys.argv
 
     logging.basicConfig(level=logging.INFO)
-    logger = logging.getLogger("AtopFileParser")
+    logger = logging.getLogger("fileparser")
 
-    command_line = AtopCommandLine.AtopCommandLine(argv)
+    command_line = CommandLine(argv)
 
     logger.debug("Atop parsing started")
     try:
-        parser = AtopFileParser.AtopFileParser(logger)
+        parser = AtopFileParser(logger)
         parser.parse(command_line.getFileName())
     except IOError:
         logger.error("File not found exception")
