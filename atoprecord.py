@@ -1,52 +1,48 @@
+"""
+    Representation of an atop sample.
+"""
 import logging
 import json
 
-from headergrammar import HeaderGrammar
-from memlinegrammar import MemLineGrammar
-from cpulinegrammar import CpuLineGrammar
+from memline import MemLine
+from cpuline import CpuLine
+from iso8601timestamp import Iso8601Timestamp
 
 class AtopRecord(object):
-    memlinegrammar = MemLineGrammar().get_grammar()
-    cpulinegrammar = CpuLineGrammar().get_grammar()
+    """
+        An atop sample taken on a host at a particular time.
+    """
 
     def __init__(self, recordNo, logger=None):
         self.logger = logger or logging.getLogger(__name__)
         self.record_no = recordNo
-        self.host = None
+        self.hostname = None
         self.timestamp = None
-        self.fields = {}
+        self.lines = []
 
-    def __str__(self):
-        return json.dumps(self.fields)
-
-    def parseLine(self, line):
+    def parse_line(self, line):
         if line.startswith("MEM"):
-            self._parseMemLine(line)
+            self.lines.append(MemLine(line))
         elif line.startswith("CPU"):
-            self._parseCpuLine(line)
+            self.lines.append(CpuLine(line))
 
-    def _parseMemLine(self, line):
-        parse_results = self.memlinegrammar.parseString(line)
+    def to_json(self):
+        if self.timestamp == None:
+            self._finalise_record()
+        fields = {}
+        fields["@version"] = 1
+        fields["@timestamp"] = Iso8601Timestamp(self.timestamp).to_iso8601()
+        fields["host"] = self.hostname
+        for line in self.lines:
+            line.addFields(fields)
 
-        memTotal = int(parse_results.get(MemLineGrammar.MEM_TOTAL))
-        memFree = int(parse_results.get(MemLineGrammar.MEM_FREE))
-        memUsedPct = ((memTotal - memFree) / memTotal) * 100
+        return json.dumps(fields)
 
-        if (self.host == None):
-            self.host = parse_results.get(HeaderGrammar.HOSTNAME)
-        if (self.timestamp == None):
-            self.timestamp = int(parse_results.get(HeaderGrammar.EPOCH))
-
-        self.fields["memUsedPercentage"] = memUsedPct
-
-    def _parseCpuLine(self, line):
-#        cpu_parser = cpulineparser()
-#        cpu_parser.parse(line)
-
-        parse_results = self.cpulinegrammar.parseString(line)
-
-        if (self.host == None):
-            self.host = parse_results.get(HeaderGrammar.HOSTNAME)
-        if (self.timestamp == None):
-            self.timestamp = int(parse_results.get(HeaderGrammar.EPOCH))
+    def _finalise_record(self):
+        assert len(self.lines) > 0
+        first_record = self.lines[0]
+        if self.hostname == None:
+            self.hostname = first_record.get_host_name()
+        if self.timestamp == None:
+            self.timestamp = first_record.get_timestamp()
 

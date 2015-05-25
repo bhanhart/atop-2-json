@@ -39,12 +39,12 @@ class AtopFileParser(object):
             else:
                 if processing_totals_since_boot:
                     continue
-                self.current_record.parseLine(line)
+                self.current_record.parse_line(line)
 
         self._save_to_json_file()
 
     def _save_to_json_file(self):
         with open("/home/hsd/work/atop.mem.json", 'w') as json_file:
             for record in self.records:
-                json_file.write(str(record))
+                json_file.write(record.to_json())
                 json_file.write("\n")

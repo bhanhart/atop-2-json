@@ -8,19 +8,19 @@ from pyparsing import Literal, Word, nums
 
 import headergrammar
 
-CPU_TICKS_PER_SECOND = "cpu_ticks_per_second"
-CPU_NUM_PROCESSORS = "cpu_num_processors"
-CPU_SYSTEM_TICKS = "cpu_system_ticks"
-CPU_USER_TICKS = "cpu_user_ticks"
-CPU_IDLE_TICKS = "cpu_idle_ticks"
-CPU_WAIT_TICKS = "cpu_wait_ticks"
-CPU_IRQ_TICKS = "cpu_irq_ticks"
-CPU_SOFTIRQ_TICKS = "cpu_softirq_ticks"
-CPU_STEAL_TICKS = "cpu_steal_ticks"
-CPU_GUEST_TICKS = "cpu_guest_ticks"
-
 class CpuLineGrammar(object):
     """ Specification in pyparsing format of an atop CPU line """
+
+    CPU_TICKS_PER_SECOND = "cpu_ticks_per_second"
+    CPU_NUM_PROCESSORS = "cpu_num_processors"
+    CPU_SYSTEM_TICKS = "cpu_system_ticks"
+    CPU_USER_TICKS = "cpu_user_ticks"
+    CPU_IDLE_TICKS = "cpu_idle_ticks"
+    CPU_WAIT_TICKS = "cpu_wait_ticks"
+    CPU_IRQ_TICKS = "cpu_irq_ticks"
+    CPU_SOFTIRQ_TICKS = "cpu_softirq_ticks"
+    CPU_STEAL_TICKS = "cpu_steal_ticks"
+    CPU_GUEST_TICKS = "cpu_guest_ticks"
 
     _header_grammar = headergrammar.HeaderGrammar()
 
@@ -42,17 +42,17 @@ class CpuLineGrammar(object):
 
         grammar = category
         grammar += self._header_grammar.get_grammar()
-        grammar += ticks_per_second(CPU_TICKS_PER_SECOND)
-        grammar += num_processors(CPU_NUM_PROCESSORS)
-        grammar += cpu_system(CPU_SYSTEM_TICKS)
-        grammar += cpu_user(CPU_USER_TICKS)
+        grammar += ticks_per_second(self.CPU_TICKS_PER_SECOND)
+        grammar += num_processors(self.CPU_NUM_PROCESSORS)
+        grammar += cpu_system(self.CPU_SYSTEM_TICKS)
+        grammar += cpu_user(self.CPU_USER_TICKS)
         grammar += cpu_nice
-        grammar += cpu_idle(CPU_IDLE_TICKS)
-        grammar += cpu_wait(CPU_WAIT_TICKS)
-        grammar += cpu_irq(CPU_IRQ_TICKS)
-        grammar += cpu_softirq(CPU_SOFTIRQ_TICKS)
-        grammar += cpu_steal(CPU_STEAL_TICKS)
-        grammar += cpu_guest(CPU_GUEST_TICKS)
+        grammar += cpu_idle(self.CPU_IDLE_TICKS)
+        grammar += cpu_wait(self.CPU_WAIT_TICKS)
+        grammar += cpu_irq(self.CPU_IRQ_TICKS)
+        grammar += cpu_softirq(self.CPU_SOFTIRQ_TICKS)
+        grammar += cpu_steal(self.CPU_STEAL_TICKS)
+        grammar += cpu_guest(self.CPU_GUEST_TICKS)
 
         self.cpu_line_grammar = grammar
 
