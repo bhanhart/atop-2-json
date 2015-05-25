@@ -23,7 +23,7 @@ class CpuLine(ResourceLine):
         '''
         Constructor
         '''
-        super().__init__()
+        super(CpuLine, self).__init__()
 
         parse_results = self._grammar.parseString(line)
         self._store_parse_results(parse_results)

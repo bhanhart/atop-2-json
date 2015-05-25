@@ -8,14 +8,14 @@ from memline import MemLine
 from cpuline import CpuLine
 from iso8601timestamp import Iso8601Timestamp
 
-class AtopRecord(object):
+class AtopSample(object):
     """
         An atop sample taken on a host at a particular time.
     """
 
-    def __init__(self, recordNo, logger=None):
-        self.logger = logger or logging.getLogger(__name__)
-        self.record_no = recordNo
+    def __init__(self, sample_no, logger=None):
+        self._logger = logger or logging.getLogger(__name__)
+        self.sample_no = sample_no
         self.hostname = None
         self.timestamp = None
         self.lines = []
@@ -28,7 +28,7 @@ class AtopRecord(object):
 
     def to_json(self):
         if self.timestamp == None:
-            self._finalise_record()
+            self._finalise_sample()
         fields = {}
         fields["@version"] = 1
         fields["@timestamp"] = Iso8601Timestamp(self.timestamp).to_iso8601()
@@ -36,13 +36,16 @@ class AtopRecord(object):
         for line in self.lines:
             line.addFields(fields)
 
-        return json.dumps(fields)
+        self._logger.debug("Atop sample " + str(self.sample_no) +
+            ": host=" + fields["host"] + ", timestamp=" + fields["@timestamp"])
 
-    def _finalise_record(self):
+        return json.dumps(fields, sort_keys=True)
+
+    def _finalise_sample(self):
         assert len(self.lines) > 0
-        first_record = self.lines[0]
+        first_line = self.lines[0]
         if self.hostname == None:
-            self.hostname = first_record.get_host_name()
+            self.hostname = first_line.get_host_name()
         if self.timestamp == None:
-            self.timestamp = first_record.get_timestamp()
+            self.timestamp = first_line.get_timestamp()
 

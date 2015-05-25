@@ -16,7 +16,7 @@ class MemLineGrammar(object):
     _header_grammar = headergrammar.HeaderGrammar()
 
     def __init__(self, logger=None):
-        self.logger = logger or logging.getLogger(__name__)
+        self._logger = logger or logging.getLogger(__name__)
 
         category = Literal("MEM").suppress()
         pageSize = Word(nums)

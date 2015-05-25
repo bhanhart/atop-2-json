@@ -16,7 +16,7 @@ class MemLine(ResourceLine):
     _grammar = MemLineGrammar().get_grammar()
 
     def __init__(self, line):
-        super().__init__()
+        super(MemLine, self).__init__()
 
         self._total_kb = None
         self._used_kb = None

@@ -11,12 +11,26 @@ class CommandLine(object):
                                 description="Convert atop files to JSON")
         parser.add_argument(
                         '--file',
+                        required=True,
                         action="store",
-                        dest="atopFileName",
+                        dest="atop_file_name",
                         help="atop file to converted to JSON")
+        parser.add_argument(
+                        '--dir',
+                        required=True,
+                        action="store",
+                        dest="dir_name",
+                        help="directory to be monitored for atop files")
 
-        self.fileName = parser.parse_args(argv[1:]).atopFileName
+        parseResults = parser.parse_args(argv[1:])
 
-    def getFileName(self):
-        return self.fileName
+        self._atop_file_name = parseResults.atop_file_name
+        self._monitored_directory = parseResults.dir_name
+
+    def get_atop_filename(self):
+        return self._atop_file_name
+
+    def get_monitored_directory(self):
+        return self._monitored_directory
+
 

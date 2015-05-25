@@ -25,7 +25,7 @@ class CpuLineGrammar(object):
     _header_grammar = headergrammar.HeaderGrammar()
 
     def __init__(self, logger=None):
-        self.logger = logger or logging.getLogger(__name__)
+        self._logger = logger or logging.getLogger(__name__)
 
         category = Literal("CPU").suppress()
         ticks_per_second = Word(nums)

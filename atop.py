@@ -5,8 +5,9 @@ import sys
 import logging
 
 from commandline import CommandLine
-from fileparser import AtopFileParser
-
+from atopfileparser import AtopFileParser
+from atopconvertor import AtopConvertor
+from directorymonitor import DirectoryMonitor
 
 def main(argv=None):
     """ Read the passed in atop text file and convert to JSON """
@@ -15,14 +16,20 @@ def main(argv=None):
         argv = sys.argv
 
     logging.basicConfig(level=logging.INFO)
-    logger = logging.getLogger("fileparser")
+    logger = logging.getLogger("AtopParser")
 
     command_line = CommandLine(argv)
+
+    watcher = DirectoryMonitor(
+        command_line.get_monitored_directory(),
+        AtopConvertor("ls", logger),
+        logger)
+    watcher.run()
 
     logger.debug("Atop parsing started")
     try:
         parser = AtopFileParser(logger)
-        parser.parse(command_line.getFileName())
+        parser.parse(command_line.get_atop_filename())
     except IOError:
         logger.error("File not found exception")
         return 1
