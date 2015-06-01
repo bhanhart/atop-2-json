@@ -4,6 +4,8 @@
 import sys
 import logging
 
+from configparser import SafeConfigParser
+
 from commandline import CommandLine
 from atopfileparser import AtopFileParser
 from atopconvertor import AtopConvertor
@@ -17,6 +19,9 @@ def main(argv=None):
 
     logging.basicConfig(level=logging.INFO)
     logger = logging.getLogger("AtopParser")
+
+    cnf = SafeConfigParser()
+    cnf.read("atop.ini")
 
     command_line = CommandLine(argv)
 
